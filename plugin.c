@@ -3,16 +3,26 @@
 
 #include <stdbool.h>
 
-static const char* required_function_names[] = {"vvctre_gui_begin", "vvctre_gui_end",
-                                                "vvctre_gui_text"};
+static const char* required_function_names[] = {
+	"vvctre_settings_set_audio_volume",
+	"vvctre_settings_set_custom_textures",
+	"vvctre_settings_set_resolution",
+	"vvctre_settings_set_layout",
+    "vvctre_set_cheat_enabled"
+};
 
-typedef bool (*vvctre_gui_begin_t)(const char* name);
-typedef void (*vvctre_gui_end_t)();
-typedef bool (*vvctre_gui_text_t)(const char* text);
+typedef void (*vvctre_settings_set_audio_volume_t)(float value);
+typedef void (*vvctre_settings_set_custom_textures_t)(bool value);
+typedef void (*vvctre_settings_set_resolution_t)(int value);
+typedef void (*vvctre_settings_set_layout_t)(int value);
+typedef void (*vvctre_set_cheat_enabled_t)(void* core, int index, bool enabled);
 
-static vvctre_gui_begin_t vvctre_gui_begin;
-static vvctre_gui_end_t vvctre_gui_end;
-static vvctre_gui_text_t vvctre_gui_text;
+static vvctre_settings_set_audio_volume_t vvctre_settings_set_audio_volume;
+static vvctre_settings_set_custom_textures_t vvctre_settings_set_custom_textures;
+static vvctre_settings_set_resolution_t vvctre_settings_set_resolution;
+static vvctre_settings_set_layout_t vvctre_settings_set_layout;
+static vvctre_set_cheat_enabled_t vvctre_set_cheat_enabled;
+static void* vvctre_core;
 
 #ifdef _WIN32
 #define VVCTRE_PLUGIN_EXPORT __declspec(dllexport)
@@ -21,7 +31,7 @@ static vvctre_gui_text_t vvctre_gui_text;
 #endif
 
 VVCTRE_PLUGIN_EXPORT int GetRequiredFunctionCount() {
-    return 3;
+    return 5;
 }
 
 VVCTRE_PLUGIN_EXPORT const char** GetRequiredFunctionNames() {
@@ -30,14 +40,22 @@ VVCTRE_PLUGIN_EXPORT const char** GetRequiredFunctionNames() {
 
 VVCTRE_PLUGIN_EXPORT void PluginLoaded(void* core, void* plugin_manager,
                                        void* required_functions[]) {
-    vvctre_gui_begin = (vvctre_gui_begin_t)required_functions[0];
-    vvctre_gui_end = (vvctre_gui_end_t)required_functions[1];
-    vvctre_gui_text = (vvctre_gui_text_t)required_functions[2];
+    vvctre_core = core;
+    vvctre_settings_set_audio_volume = (vvctre_settings_set_audio_volume_t)required_functions[0];
+    vvctre_settings_set_custom_textures = (vvctre_settings_set_custom_textures_t)required_functions[1];
+    vvctre_settings_set_resolution = (vvctre_settings_set_resolution_t)required_functions[2];
+    vvctre_settings_set_layout = (vvctre_settings_set_layout_t)required_functions[3];
+    vvctre_set_cheat_enabled = (vvctre_set_cheat_enabled_t)required_functions[4];
 }
 
-VVCTRE_PLUGIN_EXPORT void BeforeDrawingFPS() {
-    if (vvctre_gui_begin("Plugin")) {
-        vvctre_gui_text("Your plugin works!");
-    }
-    vvctre_gui_end();
+
+VVCTRE_PLUGIN_EXPORT void InitialSettingsOpening() {
+    vvctre_settings_set_audio_volume(0.85f);
+    vvctre_settings_set_custom_textures(true);
+    vvctre_settings_set_resolution(5);
+    vvctre_settings_set_layout(2);
+}
+
+VVCTRE_PLUGIN_EXPORT void EmulationStarting() {
+    vvctre_set_cheat_enabled(vvctre_core, 0, true);
 }

@@ -109,7 +109,7 @@ VVCTRE_PLUGIN_EXPORT void AfterSwapWindow() {
             vvctre_use_real_touch_state(vvctre_core);
             was_pressed = false;
         } else if (!was_pressed && pressed) {
-            vvctre_set_custom_touch_state(vvctre_core, coords[i][0], coords[i][1], true);
+            vvctre_set_custom_touch_state(vvctre_core, coords[i][0] / 320.0f, coords[i][1] / 240.0f, true);
             was_pressed = true;
         }
     }

@@ -41,7 +41,7 @@ static void* vvctre_devices[3];
 #endif
 
 VVCTRE_PLUGIN_EXPORT int GetRequiredFunctionCount() {
-    return 5;
+    return 8;
 }
 
 VVCTRE_PLUGIN_EXPORT const char** GetRequiredFunctionNames() {

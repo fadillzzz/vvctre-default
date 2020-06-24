@@ -21,7 +21,7 @@ typedef void (*vvctre_settings_set_custom_textures_t)(bool value);
 typedef void (*vvctre_settings_set_resolution_t)(int value);
 typedef void (*vvctre_settings_set_layout_t)(int value);
 typedef void (*vvctre_set_cheat_enabled_t)(void* core, int index, bool enabled);
-typedef void (*vvctre_button_device_new_t)(void* plugin_manager, const char* params);
+typedef void* (*vvctre_button_device_new_t)(void* plugin_manager, const char* params);
 typedef void (*vvctre_set_custom_touch_state_t)(void* core, float x, float y, bool pressed);
 typedef void (*vvctre_use_real_touch_state_t)(void * core);
 typedef bool (*vvctre_button_device_get_state_t)(void * device);
@@ -102,15 +102,15 @@ VVCTRE_PLUGIN_EXPORT void AfterSwapWindow() {
         }
 
     };
-    static bool was_pressed = false;
+    static bool was_pressed[3] = {false, false, false};
     for (int i = 0; i < 3; i++) {
         const bool pressed = vvctre_button_device_get_state(vvctre_devices[i]);
-        if (was_pressed && !pressed) {
+        if (was_pressed[i] && !pressed) {
             vvctre_use_real_touch_state(vvctre_core);
-            was_pressed = false;
-        } else if (!was_pressed && pressed) {
+            was_pressed[i] = false;
+        } else if (!was_pressed[i] && pressed) {
             vvctre_set_custom_touch_state(vvctre_core, coords[i][0] / 320.0f, coords[i][1] / 240.0f, true);
-            was_pressed = true;
+            was_pressed[i] = true;
         }
     }
 }

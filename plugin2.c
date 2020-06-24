@@ -24,7 +24,7 @@ typedef void (*vvctre_set_cheat_enabled_t)(void* core, int index, bool enabled);
 typedef void (*vvctre_button_device_new_t)(void* plugin_manager, const char* params);
 typedef void (*vvctre_set_custom_touch_state_t)(void* core, float x, float y, bool pressed);
 typedef void (*vvctre_use_real_touch_state_t)(void * core);
-typedef void (*vvctre_button_device_get_state_t)(void * device);
+typedef bool (*vvctre_button_device_get_state_t)(void * device);
 
 static vvctre_settings_set_audio_volume_t vvctre_settings_set_audio_volume;
 static vvctre_settings_set_custom_textures_t vvctre_settings_set_custom_textures;
